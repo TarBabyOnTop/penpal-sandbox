@@ -1,0 +1,40 @@
+<script src="./penpal.js"></script>
+<button id="connect">connect</button>
+<script>
+    window.connect = function () {
+        const iframe = document.createElement('iframe');
+        iframe.src = 'iframe.html';
+
+        // This conditional is not Penpal-specific. It's merely
+        // an example of how you can add an iframe to the document.
+        if (
+        document.readyState === 'complete' ||
+        document.readyState === 'interactive'
+        ) {
+        document.body.appendChild(iframe);
+        } else {
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.appendChild(iframe);
+        });
+        }
+
+        // This is where the magic begins.
+        const connection = Penpal.connectToChild({
+        // The iframe to which a connection should be made.
+        iframe,
+        // Methods the parent is exposing to the child.
+        methods: {
+            add(num1, num2) {
+            return num1 + num2;
+            },
+        },
+        });
+
+        connection.promise.then((child) => {
+            child.multiply(2, 6).then((total) => console.log(total));
+            child.divide(12, 4).then((total) => console.log(total));
+        });
+    }
+
+    document.getElementById('connect').addEventListener("click", connect);
+</script>
